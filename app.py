@@ -1,6 +1,9 @@
+import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 
+
+st.title("Housing Data App")
 # -------------------------
 # Load data
 # -------------------------
@@ -51,8 +54,8 @@ merged = pd.merge(rent_by_state, price_by_state, on="state", how="inner")
 # -------------------------
 # Show merged table
 # -------------------------
-print("Merged Data:")
-print(merged.head(20))
+st.write("Merged Data:")
+st.dataframe(merged.head(20))
 
 # -------------------------
 # Scatter plot
@@ -67,4 +70,4 @@ plt.xlabel("Average Housing Price Index (index_nsa)")
 plt.ylabel("Average 2-Bedroom Rent (fmr_2)")
 plt.title("Relationship Between Housing Prices and Rent by State")
 plt.grid(True)
-plt.show()
+st.pyplot(plt)
