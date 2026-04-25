@@ -104,7 +104,57 @@ ax2.set_title("Affordability Ratio by State")
 ax2.tick_params(axis="x", rotation=90)
 
 st.pyplot(fig2)
+st.pyplot(fig)
 
+# -------------------------
+# Time Trend Comparison
+# -------------------------
+st.subheader("Time Trend Comparison")
+
+# Make sure year column is numeric
+hpi["yr"] = pd.to_numeric(hpi["yr"], errors="coerce")
+
+# Create yearly HPI data by state
+hpi_yearly = (
+    hpi[["state", "yr", "index_nsa"]]
+    .dropna()
+    .groupby(["state", "yr"], as_index=False)["index_nsa"]
+    .mean()
+)
+
+two_states = st.multiselect(
+    "Select 2 states to compare over time",
+    options=sorted(hpi_yearly["state"].unique()),
+    default=["CA", "AZ"]
+)
+
+if len(two_states) == 2:
+    trend_data = hpi_yearly[hpi_yearly["state"].isin(two_states)]
+
+    fig_time, ax_time = plt.subplots(figsize=(10, 6))
+
+    for state in two_states:
+        state_data = trend_data[trend_data["state"] == state]
+        ax_time.plot(
+            state_data["yr"],
+            state_data["index_nsa"],
+            marker="o",
+            label=state
+        )
+
+    ax_time.set_xlabel("Year")
+    ax_time.set_ylabel("Housing Price Index")
+    ax_time.set_title("Housing Price Index Trend Over Time")
+    ax_time.legend()
+    ax_time.grid(True)
+
+    st.pyplot(fig_time)
+
+else:
+    st.info("Please select exactly 2 states to compare.")
+
+# Insights
+st.subheader("Insights")
 st.subheader("Insights")
 
 highest_rent = filtered.loc[filtered["avg_rent_2br"].idxmax()]
