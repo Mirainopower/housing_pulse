@@ -65,8 +65,13 @@ with col2:
     st.metric("Average HPI", f"{filtered['avg_hpi'].mean():.2f}")
 
 with col3:
-    correlation = filtered["avg_rent_2br"].corr(filtered["avg_hpi"])
-    st.metric("Rent vs HPI Correlation", f"{correlation:.2f}")
+    corr_data = filtered[["avg_rent_2br", "avg_hpi"]].dropna()
+
+    if len(corr_data) > 1:
+        correlation = corr_data["avg_rent_2br"].corr(corr_data["avg_hpi"])
+        st.metric("Rent vs HPI Correlation", f"{correlation:.2f}")
+    else:
+        st.metric("Rent vs HPI Correlation", "Not enough data")
 
 st.subheader("Data Preview")
 st.dataframe(filtered)
